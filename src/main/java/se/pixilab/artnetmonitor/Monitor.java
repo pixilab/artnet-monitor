@@ -14,7 +14,7 @@
  ArtNet monitor that ran on Mac/Linux, and I prefer not having to schlep
  around a Windows boat anchor just for this).
 
-*/
+ */
 
 package se.pixilab.artnetmonitor;
 
@@ -73,7 +73,7 @@ public class Monitor extends ArtNetServerEventAdapter {
 
 /**
  My single window, containing some controls and the DMX data grid.
-*/
+ */
 class MainWindow {
 	private DmxDataGrid mDataGrid;
 
@@ -255,7 +255,7 @@ class DmxDataGrid extends JComponent {
 
 	/**
 	 Paint ALL values (if drawAll) or channels set in mChangedChannels.
-	*/
+	 */
 	private synchronized void paintValues(Graphics g, boolean changedOnly) {
 		int ix = 0;
 		if (changedOnly) {	// Paint only changed values
@@ -281,7 +281,7 @@ class DmxDataGrid extends JComponent {
 
 	/**
 	 Paint the value at ix.
-	*/
+	 */
 	private void paintValue(Graphics g, int ix) {
 		int v = (mNewValues[ix] + 256) & 0xff;
 		int y = (ix / kValuesPerRow) * mCellHeight + mLineHeight + mDescent;
