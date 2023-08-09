@@ -184,7 +184,9 @@ class DmxDataGrid extends JComponent {
 	private boolean mHaveSetUp;
 
 	private char mByteChars[] = new char[kCharsPerCell];
-	private boolean mHasPendingUpdate;
+
+	private Image mImage = null;
+	private Dimension mSize;
 
 	// Keeps track of changed channels, to repaint those
 	private BitSet mChangedChannels = new BitSet(Monitor.kChannels);
@@ -204,11 +206,11 @@ class DmxDataGrid extends JComponent {
 		mCellHeight = (mLineHeight + mDescent) * 2 + (int)Math.floor((float)mLineHeight / 2);
 		int rows = Monitor.kChannels / kValuesPerRow;
 
-		Dimension size = new Dimension(kValuesPerRow * mCellWidth, mCellHeight * rows);
-		setMinimumSize(size);
+		mSize = new Dimension(kValuesPerRow * mCellWidth, mCellHeight * rows);
+		setMinimumSize(mSize);
 
 		setOpaque(true);
-		setPreferredSize(size);
+		setPreferredSize(mSize);
 	}
 
 	synchronized void setNewValues(byte[] dmxData) {
@@ -225,35 +227,18 @@ class DmxDataGrid extends JComponent {
 		}
 		if (news) {
 			System.arraycopy(dmxData, 0, mNewValues, 0, len);
-			valuesChanged();
-		}
-	}
-
-	/**
-	 Called only from setNewValues, so I'm already synchronized.
-	 */
-	private void valuesChanged() {
-		if (!mHasPendingUpdate) {
-			mHasPendingUpdate = true;	// I do now
-			SwingUtilities.invokeLater(() -> {
-				// Now on the UI thread...
-				synchronized (DmxDataGrid.this) {
-					mHasPendingUpdate = false;	// Now taken
-				}
-				Graphics g = getGraphics();
-				if (g != null) {
-					paintValues(g, true);
-					g.dispose();
-				}
-			});
+			repaint();
 		}
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
+		boolean paintChangedOnly = mHaveSetUp;
 
 		if (!mHaveSetUp) {	// Only do this once
 			if (g instanceof Graphics2D) {
+				// https://www.oracle.com/java/technologies/graphics-performance-improvements.html
+				mImage = createImage(mSize.width, mSize.height);
 				Graphics2D g2 = (Graphics2D)g;
 				g2.setRenderingHint(
 					RenderingHints.KEY_ANTIALIASING,
@@ -262,9 +247,10 @@ class DmxDataGrid extends JComponent {
 			}
 			mHaveSetUp = true;
 		}
-		paintValues(g, false);
-
-		// g.drawString("This is gona be awesome", 70, 20);
+		Graphics gImg = mImage.getGraphics();
+		paintValues(gImg, paintChangedOnly);
+		g.drawImage(mImage, 0, 0, null);
+		gImg.dispose();
 	}
 
 	/**
@@ -277,6 +263,8 @@ class DmxDataGrid extends JComponent {
 				paintValue(g, ix++);
 			mChangedChannels.clear();
 		} else {	// Paint all
+			g.setColor(getBackground()); // Fill with background colour
+			g.fillRect(0, 0, mSize.width, mSize.height);
 			while (ix < Monitor.kChannels) {
 				paintChannelNumber(g, ix);
 				paintValue(g, ix++);
