@@ -6,7 +6,7 @@
 
 	<!-- artnet4j from https://github.com/cansik/artnet4j -->
 	<groupId>pixilab</groupId>
-	<artifactId>artnet-timecode</artifactId>
+	<artifactId>artnet-monitor</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<dependencies>
@@ -15,15 +15,10 @@
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
 		</dependency>
-		<dependency>
-		  <groupId>ch.bildspur</groupId>
-		  <artifactId>artnet4j</artifactId>
-		  <version>0.6.2</version>
-		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>ArtNet-Timecode</finalName>
+		<finalName>ArtNet-Monitor</finalName>
 		<plugins>
 			<plugin>
 			    <groupId>org.codehaus.mojo</groupId>
@@ -111,7 +106,7 @@
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>se.pixilab.artnet.Timecode</mainClass>
+									<mainClass>se.pixilab.artnetmonitor.Monitor</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
@@ -120,4 +115,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
