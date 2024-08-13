@@ -16,7 +16,7 @@
 
  */
 
-package se.pixilab.artnetmonitor;
+package se.pixilab.artnet;
 
 import ch.bildspur.artnet.ArtNetException;
 import ch.bildspur.artnet.ArtNetServer;
@@ -36,7 +36,7 @@ import java.util.BitSet;
 public class Monitor extends ArtNetServerEventAdapter {
 	public static final int kChannels = 512;
 	private ArtNetServer server;
-	private MainWindow mWindow;
+	private MonitorWindow mWindow;
 
 	public static void main(String argv[]) {
 
@@ -58,7 +58,7 @@ public class Monitor extends ArtNetServerEventAdapter {
 	}
 
 	Monitor() throws SocketException, ArtNetException {
-		mWindow = new MainWindow();
+		mWindow = new MonitorWindow();
 		server = new ArtNetServer();
 		server.addListener(this);
 		server.start(null);
@@ -74,7 +74,7 @@ public class Monitor extends ArtNetServerEventAdapter {
 /**
  My single window, containing some controls and the DMX data grid.
  */
-class MainWindow {
+class MonitorWindow {
 	private DmxDataGrid mDataGrid;
 
 	JRadioButton allUniverses = new JRadioButton("All");
@@ -85,7 +85,7 @@ class MainWindow {
 	JLabel receivedUniverse = new JLabel("   ");
 	int mLastReceivedUniverse = -1;
 
-	MainWindow() {
+	MonitorWindow() {
 		JFrame frame = new JFrame("PIXILAB ArtNet Monitor");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
